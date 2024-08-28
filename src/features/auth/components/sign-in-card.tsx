@@ -6,6 +6,8 @@ import { Separator } from '@/components/ui/separator';
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from 'react-icons/fa';
 import { SignInFlow } from '../types';
+// import { signIn } from '@/auth';
+import { signIn } from "next-auth/react"
 
 interface SignInCardProps {
     setState: (state: SignInFlow) => void
@@ -16,6 +18,14 @@ const SignInCard = ({ setState }: SignInCardProps) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const githubHandler = async () => {
+        const res = await fetch("/api/auth/logup/github", {
+            // body: JSON.stringify({ test: "Okk" })
+        })
+
+        const data = await res.text()
+        console.log(data);
+    }
   return (
     <Card className='w-full h-full p-8'>
         <CardHeader className='px-0 pt-0'>
@@ -43,7 +53,7 @@ const SignInCard = ({ setState }: SignInCardProps) => {
                     <FcGoogle className='size-5 absolute left-3 top-2.5' /> Continue with Google
                 </Button>
 
-                <Button disabled={false} onClick={() => {}} variant="outline" size="lg" className='w-full relative'>
+                <Button disabled={false} onClick={() => signIn("github")} variant="outline" size="lg" className='w-full relative'>
                     <FaGithub className='size-5 absolute left-3 top-2.5' /> Continue with GitHub
                 </Button>
 
