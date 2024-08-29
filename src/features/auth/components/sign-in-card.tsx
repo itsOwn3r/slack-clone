@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+"use client";
+import React, { FormEvent, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,9 @@ import { FaGithub } from 'react-icons/fa';
 import { SignInFlow } from '../types';
 // import { signIn } from '@/auth';
 import { signIn } from "next-auth/react"
+import { TriangleAlert } from 'lucide-react';
+import { LoginSchema } from '@/types/Schema';
+import { useRouter } from 'next/navigation';
 
 interface SignInCardProps {
     setState: (state: SignInFlow) => void
@@ -17,6 +21,49 @@ const SignInCard = ({ setState }: SignInCardProps) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    
+    const [isLoading, setIsLoding] = useState(false);
+
+    const router = useRouter();
+
+
+    const loginHander = async (e: FormEvent) => {
+
+        e.preventDefault();
+        try {
+            setIsLoding(true);
+            setError("");
+
+            const validateForm = LoginSchema.safeParse({
+                email,
+                password
+            })
+                    
+            if (!validateForm.success) {
+                setError(validateForm.error.issues[0].message);
+                return;
+            }
+            
+            const res = await signIn("credentials", { email, password, redirect: false });
+
+            if (res?.error) {
+                if (res?.error.includes("CredentialsSignin")) {
+                    setError("Error! email or password is incorrect!")
+                } else {
+                     setError(res?.error);                     
+                }
+            } else {
+                router.push("/");
+            }
+            
+        } catch (error) {
+            setError((error as Error).message);
+        } finally {
+            setIsLoding(false);
+        }
+    }    
+
 
     const githubHandler = async () => {
         const res = await fetch("/api/auth/logup/github", {
@@ -36,24 +83,30 @@ const SignInCard = ({ setState }: SignInCardProps) => {
             Use your email or another service to continue
         </CardDescription>
         </CardHeader>
+        {!!error && (
+            <div className='bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6'>
+                <TriangleAlert className='size-4' />
+                <p>{error}</p>
+            </div>
+        )}
         <CardContent className='space-y-5 px-0 pb-0'>
 
-            <form className='space-y-2.5'>
-                <Input className='' disabled={false} value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Email' type='email' required />
-                <Input className='' disabled={false} value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' required />
+            <form className='space-y-2.5' onSubmit={loginHander}>
+                <Input className='' disabled={isLoading} value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Email' type='email' required />
+                <Input className='' disabled={isLoading} value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' required />
 
-                <Button className='w-full' size="lg" type='submit' disabled={false}>Continue</Button>
+                <Button className='w-full' size="lg" type='submit' disabled={isLoading}>Continue</Button>
             </form>
 
             <Separator />
 
             <div className="flex flex-col gap-y-2.5">
 
-                <Button disabled={false} onClick={() => {}} variant="outline" size="lg" className='w-full relative'>
+                <Button disabled={isLoading} onClick={() => {}} variant="outline" size="lg" className='w-full relative'>
                     <FcGoogle className='size-5 absolute left-3 top-2.5' /> Continue with Google
                 </Button>
 
-                <Button disabled={false} onClick={() => signIn("github")} variant="outline" size="lg" className='w-full relative'>
+                <Button disabled={isLoading} onClick={() => signIn("github")} variant="outline" size="lg" className='w-full relative'>
                     <FaGithub className='size-5 absolute left-3 top-2.5' /> Continue with GitHub
                 </Button>
 
