@@ -35,6 +35,11 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
         setIsLoding(true);
         setError("");
 
+        if(confirmPassword !== password){
+            setError("Passwords do not match!");
+            return;
+        }
+
         const validateForm = SignupSchema.safeParse({
             name,
             email,
