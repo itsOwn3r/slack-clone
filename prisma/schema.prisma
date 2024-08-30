@@ -24,7 +24,12 @@ model User {
 model Workspaces {
   id       String @id @default(uuid())
   name     String
-  joinCode String
+  joinCode Int    @unique
   userId   String
   user     User   @relation(fields: [userId], references: [id])
+
+  time Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

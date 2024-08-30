@@ -70,11 +70,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return url
     },
     async session({ session, user, token,trigger }) {
-      if (token.phone) {
         session.user.email = token.email,
         session.user.name = token.name,
         session.user.id = token.sub as string
-      }
       return session
     },
     async jwt({ token, user, account , session, profile, isNewUser, trigger }) {
