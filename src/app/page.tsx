@@ -1,11 +1,23 @@
 import { auth } from "@/auth";
-import { Button } from "@/components/ui/button";
 import { AuthScreen } from "@/features/auth/components/auth-screen";
+import { useCreateWorkspaceModal } from "@/features/workspaces/store/use-create-workspace-modal";
+import { getWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
+import db from "@/lib/db";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const user = await auth();
-  console.log(user);
+
+  if (!user) {
+    return redirect("/auth");
+  }
+
+  const workspaces = await getWorkspaces();
+  console.log(workspaces);
+
+  // const [open, setOpen] = useCreateWorkspaceModal();
+  // console.log(open);
   return (
-    <AuthScreen />
+    <div>Hello</div>
   )
 }
