@@ -58,9 +58,14 @@ const CreateWorkspaceModal = () => {
     }
     }
 
+    if (!open) {
+        return null;
+    }
+
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-        <DialogTrigger>Open</DialogTrigger>
+        {/* <DialogTrigger>Open</DialogTrigger> */}
         <DialogContent>
             <DialogHeader>
             <DialogTitle>Add a workspace</DialogTitle>

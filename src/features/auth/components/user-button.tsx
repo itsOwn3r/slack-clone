@@ -18,8 +18,8 @@ const UserButton = () => {
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className='outline-none relative'>
       <Avatar className='size-10 hover:opacity-75 transition'>
-        <AvatarImage src="https://github.com/shadcn.png" />
-        <AvatarFallback>CN</AvatarFallback>
+        <AvatarImage src="/images/124599.jpg" />
+        <AvatarFallback>U</AvatarFallback>
       </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='center' side='right' className='w-60'>

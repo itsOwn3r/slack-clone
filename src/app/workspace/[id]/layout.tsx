@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react'
 import db from '@/lib/db';
-import ToolbarComponent from '@/components/ToolbarComponent';
+import ToolbarComponent from '@/components/Workspaces/ToolbarComponent';
+import Sidebar from '@/components/Workspaces/Sidebar';
+import { notFound } from 'next/navigation';
 
 const WorkspaceIdLayout = async ({ children, params }: { children: ReactNode, params: { id: string } }) => {
-  console.log(params);
-
   
   const findWorkspace = await db.workspaces.findUnique({
     where: {
@@ -12,11 +12,18 @@ const WorkspaceIdLayout = async ({ children, params }: { children: ReactNode, pa
     }
 })
 
+    if (!findWorkspace) {
+        return notFound();
+    }
+
 
     return (
     <div className='h-full'>
         <ToolbarComponent id={params.id} name={findWorkspace?.name || "..."} />
-    {children}
+        <div className="flex h-[calc(100vh-40px)]">
+            <Sidebar currentWorkspace={findWorkspace} />
+            {children}
+        </div>
     </div>
   )
 }
