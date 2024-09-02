@@ -5,7 +5,7 @@ import Sidebar from '@/components/Workspaces/Sidebar';
 import { notFound } from 'next/navigation';
 
 const WorkspaceIdLayout = async ({ children, params }: { children: ReactNode, params: { id: string } }) => {
-  
+
   const findWorkspace = await db.workspaces.findUnique({
     where: {
         id: params.id

@@ -5,6 +5,9 @@ import db from '@/lib/db'
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { Workspaces } from '@prisma/client'
+import SidebarButton from './SidebarButton'
+import { BellIcon, Home, MessagesSquareIcon, MoreHorizontal } from 'lucide-react'
+import SidebarItems from './SidebarItems'
 
 const Sidebar = async ({ currentWorkspace }: { currentWorkspace: Workspaces }) => {
 
@@ -25,6 +28,8 @@ const Sidebar = async ({ currentWorkspace }: { currentWorkspace: Workspaces }) =
 
         <WorkspaceSwitcher workspaces={workspaces} currentWorkspace={currentWorkspace} />
 
+        <SidebarItems />
+        
         <div className='flex flex-col items-center justify-center gap-y-1 mt-auto'>
             <UserButton />
         </div>
