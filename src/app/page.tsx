@@ -12,8 +12,7 @@ export default async function Home() {
     return redirect("/auth");
   }
 
-  const workspaces = await getWorkspaces();
-  console.log(workspaces);
+  // const workspaces = await getWorkspaces();
 
   // const [open, setOpen] = useCreateWorkspaceModal();
   // console.log(open);

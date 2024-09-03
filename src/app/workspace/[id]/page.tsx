@@ -1,9 +1,10 @@
-import { auth } from '@/auth'
-import db from '@/lib/db'
-import { notFound, redirect } from 'next/navigation'
-import React from 'react'
+import React from 'react';
+import { auth } from '@/auth';
+import db from '@/lib/db';
+import { notFound, redirect } from 'next/navigation';
 
 const WorkspacePage = async ({ params }: { params: { id: string } }) => {
+
     const user = await auth();
 
     if (!user) {
@@ -13,13 +14,22 @@ const WorkspacePage = async ({ params }: { params: { id: string } }) => {
     const workspace = await db.workspaces.findUnique({
         where: {
             id: params.id,
-            userId: user.user.id
+            OR: [
+                  {
+                    userId: user.user.id
+                  },
+                  {
+                    Members: {
+                      some: { userId: user.user.id }
+                  }
+              }
+            ]
         }
     })
 
-    // if (!workspace) {
-    //     return notFound();
-    // }
+    if (!workspace) {
+        return notFound();
+    }
 
 
   return (

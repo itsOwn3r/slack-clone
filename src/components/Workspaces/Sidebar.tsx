@@ -17,9 +17,28 @@ const Sidebar = async ({ currentWorkspace }: { currentWorkspace: Workspaces }) =
         return redirect("/auth");
     }
 
-    const workspaces = await db.workspaces.findMany({
+    
+    const members = await db.members.findMany({
         where: {
             userId: user.user.id
+        }
+    })
+
+    const allWorkspaces:string[] = members.map((member) => member.workspaceId);
+
+
+    const workspaces = await db.workspaces.findMany({
+        where: {
+            OR: [
+                {
+                    userId: user.user.id
+                },
+                {
+                    id: {
+                       in: allWorkspaces
+                    }
+                },
+            ]
         }
     })
 

@@ -31,6 +31,13 @@ export async function POST(req: Request){
             }
         })
 
+        const createMember = await db.members.create({
+            data: {
+                userId: user.user.id,
+                role: "admin",
+                workspaceId: createWorkspace.id
+            }
+        })
         return NextResponse.json({ success: true, id: createWorkspace.id, message: "Workspace created!" });
 
     } catch (error) {
