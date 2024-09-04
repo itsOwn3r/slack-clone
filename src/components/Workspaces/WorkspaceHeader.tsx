@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,10 +11,18 @@ import { Button } from '@/components/ui/button'
 import { Workspaces } from '@prisma/client'
 import { ChevronDown, ListFilter, SquarePen } from 'lucide-react'
 import Hint from '../hint'
+import PreferencesModal from './PreferencesModal'
+import UpdateWorkspace from './UpdateWorkspace'
   
 const WorkspaceHeader = ({ workspace, isAdmin }: { workspace: Workspaces, isAdmin: boolean }) => {
+
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
+
   return (
-    <div className='flex items-center justify-between px-4 h-[49px] gap-0.5'>
+    <>
+      <PreferencesModal workspaceId={workspace.id} open={preferencesOpen} setOpen={setPreferencesOpen} initialValue={workspace.name} />
+      <UpdateWorkspace currentName={workspace.name} workspaceId={workspace.id} />
+      <div className='flex items-center justify-between px-4 h-[49px] gap-0.5'>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="transparent" className='font-semibold text-lg w-auto p-1.5 overflow-hidden' size="sm">
@@ -37,7 +45,7 @@ const WorkspaceHeader = ({ workspace, isAdmin }: { workspace: Workspaces, isAdmi
                   Invite people to {workspace.name}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className='cursor-pointer py-2' onClick={() => {}}>
+                <DropdownMenuItem className='cursor-pointer py-2' onClick={() => setPreferencesOpen(true)}>
                   Preferencess
                 </DropdownMenuItem></>}
             </DropdownMenuContent>
@@ -60,6 +68,7 @@ const WorkspaceHeader = ({ workspace, isAdmin }: { workspace: Workspaces, isAdmi
         </div>
 
     </div>
+   </>
   )
 }
 
