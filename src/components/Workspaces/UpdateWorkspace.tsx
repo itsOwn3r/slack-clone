@@ -25,10 +25,9 @@ console.log(currentName);
 
     const handleClose = () => {
         setOpen(!open);
-        setName("");
     }
 
-    const handleSubmit = async (e: FormEvent) => {
+    const handleUpdate = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError("");
@@ -72,7 +71,7 @@ console.log(currentName);
             <DialogTitle>Edit Workspace</DialogTitle>
             <DialogDescription>{error && <span className='text-base text-rose-600'>{error}</span>}</DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className='space-y-4'>
+            <form onSubmit={handleUpdate} className='space-y-4'>
                 <Input disabled={isLoading} onChange={(e) => setName(e.target.value)} value={name} required autoFocus={false} minLength={3} placeholder="Workspace name e.g. 'Work', 'Personal', 'Home' " />
                 <div className="flex justify-end">
                     <Button disabled={isLoading} type='submit'>
