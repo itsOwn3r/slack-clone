@@ -71,7 +71,6 @@ const SignInCard = ({ setState }: SignInCardProps) => {
         })
 
         const data = await res.text()
-        console.log(data);
     }
   return (
     <Card className='w-full h-full p-8'>

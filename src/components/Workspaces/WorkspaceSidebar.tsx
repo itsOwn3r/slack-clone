@@ -1,13 +1,16 @@
 "use client";
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation';
-import { AlertTriangle, Loader } from 'lucide-react';
-import { Members, Workspaces } from '@prisma/client';
+import { AlertTriangle, HashIcon, Loader, MessageSquareText, SendHorizonal } from 'lucide-react';
+import { Channels, Members, Workspaces } from '@prisma/client';
 import WorkspaceHeader from './WorkspaceHeader';
+import SidebarItem from './SidebarItem';
+import WorkspaceSection from './WorkspaceSection';
 
 const WorkspaceSidebar = () => {
   const [member, setMember] = useState<null | undefined |  Members>(null);
   const [workspace, setWorkspace] = useState<null | undefined |  Workspaces>(null);
+  const [channels, setChannels] = useState<null | undefined |  Channels[]>(null);
   const params = useParams();
 
   useEffect(() => {
@@ -24,6 +27,19 @@ const WorkspaceSidebar = () => {
         setMember(data.member);
       } else {
         setMember(undefined);
+      }
+
+      const getChannels = await fetch("/api/channels/getchannels", {
+        method: "POST",
+        body: JSON.stringify({ id: params.id})
+      })
+
+      const channel = await getChannels.json();
+
+      if (channel.success) {
+        setChannels(channel.channels);
+      } else {
+        setChannels(undefined);
       }
 
       const getWorkspace = await fetch("/api/workspace/getworkspace", {
@@ -43,6 +59,7 @@ const WorkspaceSidebar = () => {
     findMember();
 
   }, [params.id])
+
 
   if (member === null || workspace === null) {
     return (
@@ -65,6 +82,16 @@ const WorkspaceSidebar = () => {
   return (
     <div className="flex flex-col bg-[#5E2C5F] h-full">
       <WorkspaceHeader workspace={workspace} isAdmin={member.role === "admin"} />
+      <div className="flex flex-col px-2 mt-3">
+        <SidebarItem label="Threads" icon={MessageSquareText} id="threads" />
+        <SidebarItem label="Drafts & Sent" icon={SendHorizonal} id="drafts" />
+
+      </div>
+      <WorkspaceSection label="Channels" hint="New channel" onNew={() => console.log("Haha")}>
+        {channels?.map((item) => (
+          <SidebarItem key={item.id} icon={HashIcon} label={item.name} id={item.id} />
+        ))}
+      </WorkspaceSection>
     </div>
   )
 }

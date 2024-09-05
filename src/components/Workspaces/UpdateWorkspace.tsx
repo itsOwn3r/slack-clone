@@ -15,7 +15,6 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
   
 const UpdateWorkspace = ({ workspaceId, currentName }: { workspaceId: string, currentName: string }) => {
-console.log(currentName);
     const [open, setOpen] = useEditWorkspaceModal();
     const [name, setName] = useState(currentName ? currentName : "");
     const [error, setError] = useState("");

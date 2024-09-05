@@ -38,6 +38,14 @@ export async function POST(req: Request){
                 workspaceId: createWorkspace.id
             }
         })
+
+        const createChannel = await db.channels.create({
+            data: {
+                name: "general",
+                userId: user.user.id,
+                workspaceId: createWorkspace.id,
+            }
+        })
         return NextResponse.json({ success: true, id: createWorkspace.id, message: "Workspace created!" });
 
     } catch (error) {

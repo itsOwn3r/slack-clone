@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 const SidebarItems = () => {
 
   const pathname = usePathname();
-console.log(pathname);
+
   return (
     <>
         <SidebarButton icon={Home} label='Home' isActive={pathname.includes("/workspace")} />
