@@ -8,15 +8,16 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
-import { useEditWorkspaceModal } from "@/features/workspaces/store/stores";
+import { useCreateChannelModal } from "@/features/workspaces/store/stores";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
   
-const UpdateWorkspace = ({ workspaceId, currentName }: { workspaceId: string, currentName: string }) => {
-    const [open, setOpen] = useEditWorkspaceModal();
-    const [name, setName] = useState(currentName ? currentName : "");
+const CreateChannelModal = ({ workspaceId }: { workspaceId: string }) => {
+
+    const [open, setOpen] = useCreateChannelModal();
+    const [name, setName] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -24,26 +25,27 @@ const UpdateWorkspace = ({ workspaceId, currentName }: { workspaceId: string, cu
 
     const handleClose = () => {
         setOpen(!open);
+        setName("");
     }
 
-    const handleUpdate = async (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError("");
 
         try {
-        const editWorkspace = await fetch("/api/workspace/update", {
+        const createWorkspace = await fetch("/api/channel/create", {
             method: "POST",
-            body: JSON.stringify({ name, id: workspaceId })
+            body: JSON.stringify({ name, workspaceId })
         })
 
-        const response = await editWorkspace.json();
+        const response = await createWorkspace.json();
 
         if (response.success) {
-            // router.replace(`/workspace/${response.id}`);
+            router.push(response.path);
             router.refresh();
             handleClose();
-            toast.success("Workspace Edited!", {
+            toast.success("Channel Created!", {
                 className: "text-lg",
                 duration: 4000
             });
@@ -67,14 +69,14 @@ const UpdateWorkspace = ({ workspaceId, currentName }: { workspaceId: string, cu
         {/* <DialogTrigger>Open</DialogTrigger> */}
         <DialogContent>
             <DialogHeader>
-            <DialogTitle>Edit Workspace</DialogTitle>
+            <DialogTitle>Create a new Channel</DialogTitle>
             <DialogDescription>{error && <span className='text-base text-rose-600'>{error}</span>}</DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleUpdate} className='space-y-4'>
-                <Input disabled={isLoading} onChange={(e) => setName(e.target.value)} value={name} required autoFocus={false} minLength={3} placeholder="Workspace name e.g. 'Work', 'Personal', 'Home' " />
+            <form onSubmit={handleSubmit} className='space-y-4'>
+                <Input disabled={isLoading} onChange={(e) => setName(e.target.value)} value={name} required autoFocus minLength={3} placeholder="Channel name..." />
                 <div className="flex justify-end">
                     <Button disabled={isLoading} type='submit'>
-                        Edit
+                        Create
                     </Button>
                 </div>
             </form>
@@ -83,4 +85,4 @@ const UpdateWorkspace = ({ workspaceId, currentName }: { workspaceId: string, cu
   )
 }
 
-export default UpdateWorkspace;
+export default CreateChannelModal;

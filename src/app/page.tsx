@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { AuthScreen } from "@/features/auth/components/auth-screen";
-import { useCreateWorkspaceModal } from "@/features/workspaces/store/use-create-workspace-modal";
+import { useCreateWorkspaceModal } from "@/features/workspaces/store/stores";
 import { getWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 import db from "@/lib/db";
 import { redirect } from "next/navigation";

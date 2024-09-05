@@ -11,3 +11,9 @@ const editModalState = atom(false);
 export const useEditWorkspaceModal = () => {
     return useAtom(editModalState);
 }
+
+const createChannel = atom(false);
+
+export const useCreateChannelModal = () => {
+    return useAtom(createChannel);
+}

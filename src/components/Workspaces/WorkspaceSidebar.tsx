@@ -7,13 +7,20 @@ import WorkspaceHeader from './WorkspaceHeader';
 import SidebarItem from './SidebarItem';
 import WorkspaceSection from './WorkspaceSection';
 import UserItem from './UserItem';
+import { useCreateChannelModal } from '@/features/workspaces/store/stores';
+import CreateChannelModal from './Channels/CreateChannelModal';
 
 const WorkspaceSidebar = () => {
+  const [open, setOpen] = useCreateChannelModal();
+
+
   const [currentMember, setCurrentMember] = useState<null | undefined |  Members>(null);
   const [members, setMembers] = useState<null | undefined | (Members & {user: { id: string, email: string, name: string }})[]>(null);
   const [workspace, setWorkspace] = useState<null | undefined |  Workspaces>(null);
   const [channels, setChannels] = useState<null | undefined |  Channels[]>(null);
   const params = useParams();
+
+  const workspaceId: string = params.id as string;
 
   useEffect(() => {
     async function findMember() {
@@ -74,7 +81,7 @@ const WorkspaceSidebar = () => {
     findMember();
 
   }, [params.id])
-console.log(members);
+
   if (currentMember === null || workspace === null) {
     return (
     <div className="flex flex-col bg-[#5E2C5F] h-full items-center justify-center">
@@ -95,13 +102,14 @@ console.log(members);
 
   return (
     <div className="flex flex-col bg-[#5E2C5F] h-full">
+      <CreateChannelModal workspaceId={workspaceId} />
       <WorkspaceHeader workspace={workspace} isAdmin={currentMember.role === "admin"} />
       <div className="flex flex-col px-2 mt-3">
         <SidebarItem label="Threads" icon={MessageSquareText} id="threads" />
         <SidebarItem label="Drafts & Sent" icon={SendHorizonal} id="drafts" />
 
       </div>
-      <WorkspaceSection label="Channels" hint="New channel" onNew={() => console.log("Haha")}>
+      <WorkspaceSection label="Channels" hint="New channel" onNew={currentMember.role === "admin" ? () => setOpen(true) : undefined}>
         {channels?.map((item) => (
           <SidebarItem key={item.id} icon={HashIcon} label={item.name} id={item.id} />
         ))}

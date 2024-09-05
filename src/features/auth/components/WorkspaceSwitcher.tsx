@@ -10,7 +10,7 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { Button } from '@/components/ui/button'
 import { Workspaces } from '@prisma/client'
-import { useCreateWorkspaceModal } from '@/features/workspaces/store/use-create-workspace-modal';
+import { useCreateWorkspaceModal } from '@/features/workspaces/store/stores';
 import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
 

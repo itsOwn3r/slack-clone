@@ -10,7 +10,7 @@ import {
     DialogFooter
   } from "@/components/ui/dialog";
 import { Loader, TrashIcon } from 'lucide-react';
-import { useEditWorkspaceModal } from '@/features/workspaces/store/use-create-workspace-modal';
+import { useEditWorkspaceModal } from '@/features/workspaces/store/stores';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import useConfirm from '@/hooks/use-confirm';
