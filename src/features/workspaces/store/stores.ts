@@ -17,3 +17,9 @@ const createChannel = atom(false);
 export const useCreateChannelModal = () => {
     return useAtom(createChannel);
 }
+
+const inviteModal = atom(false);
+
+export const useInviteModal = () => {
+    return useAtom(inviteModal);
+}
