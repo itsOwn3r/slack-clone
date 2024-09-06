@@ -13,16 +13,16 @@ export async function POST(req: Request){
 
         const data = await req.json();
 
-        const { id } = data;
+        const { workspaceId, channelId } = data;
 
-        const findChannels = await db.channels.findMany({
+        const findChannel = await db.channels.findUnique({
             where: {
-                userId: user.user.id,
-                workspaceId: id
+                workspaceId,
+                id: channelId
             }
         })
 
-        return NextResponse.json({ success: true, channels: findChannels, message: "Channels Found!" });
+        return NextResponse.json({ success: true, channel: findChannel, message: "Channel Found!" });
 
     } catch (error) {
         return NextResponse.json({ success: false, message: "Something went wrong!" });
