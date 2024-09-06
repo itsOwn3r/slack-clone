@@ -21,6 +21,7 @@ const WorkspaceSidebar = () => {
   const params = useParams();
 
   const workspaceId: string = params.id as string;
+  const channelId: string = params.channelId as string;
 
   useEffect(() => {
     async function findMember() {
@@ -111,7 +112,7 @@ const WorkspaceSidebar = () => {
       </div>
       <WorkspaceSection label="Channels" hint="New channel" onNew={currentMember.role === "admin" ? () => setOpen(true) : undefined}>
         {channels?.map((item) => (
-          <SidebarItem key={item.id} icon={HashIcon} label={item.name} id={item.id} />
+          <SidebarItem key={item.id} icon={HashIcon} label={item.name} id={item.id} variant={item.id === channelId ? "active" : "default"} />
         ))}
       </WorkspaceSection>
       <WorkspaceSection label="Direct Messages" hint="New Direct Message" onNew={() => console.log("Haha")}>

@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
   
-const CreateChannelModal = ({ workspaceId }: { workspaceId: string }) => {
+const CreateChannelModal = ({ workspaceId, defaultOpen }: { workspaceId: string, defaultOpen?: boolean }) => {
 
     const [open, setOpen] = useCreateChannelModal();
     const [name, setName] = useState("");
@@ -22,6 +22,10 @@ const CreateChannelModal = ({ workspaceId }: { workspaceId: string }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const router = useRouter();
+
+        if (defaultOpen === true) {
+            setOpen(true);
+        }
 
     const handleClose = () => {
         setOpen(!open);
@@ -42,7 +46,7 @@ const CreateChannelModal = ({ workspaceId }: { workspaceId: string }) => {
         const response = await createWorkspace.json();
 
         if (response.success) {
-            router.push(response.path);
+            window.location.href = response.path;
             router.refresh();
             handleClose();
             toast.success("Channel Created!", {
