@@ -117,7 +117,7 @@ const InviteModal = ({ name, open, setOpen, workspaceId, joinCode }: Preferences
 
     
     const copyHanle = () => {
-        const inviteLink = `${window.location.origin}/join/${params.id}/${safeInviteCode}`;
+        const inviteLink = `${window.location.origin}/join/${params.id}`;
         navigator.clipboard.writeText(inviteLink);
         toast.success("Invite link copied to clipboard!", {
             className: "text-lg",
