@@ -1,4 +1,5 @@
 import { auth } from '@/auth'
+import ChatInput from '@/components/Workspaces/Channels/ChatInput'
 import ChannelHeader from '@/components/Workspaces/Channels/Header'
 import db from '@/lib/db'
 import { notFound, redirect } from 'next/navigation'
@@ -34,11 +35,13 @@ const ChannelIdPage = async ({ params }: { params: { id: string, channelId: stri
     }
 
 
-    const isAdmin = findChannel.workspace.Members[0].role === "admin"
+    const isAdmin = findChannel.workspace.Members[0].role === "admin";
     
   return (
     <div className='flex flex-col h-full'>
       <ChannelHeader isAdmin={isAdmin} channelName={findChannel.name} channelId={findChannel.id} workspaceId={findChannel.workspaceId} />
+      <div className="flex-1" />
+      <ChatInput />
     </div>
   )
 }
