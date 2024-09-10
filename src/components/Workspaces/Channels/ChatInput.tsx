@@ -1,5 +1,7 @@
-import { Editor } from '@/components/Editor'
-import React from 'react'
+import React from 'react';
+import dynamic from 'next/dynamic';
+
+const Editor = dynamic(() => import("@/components/Editor"), { ssr: false })
 
 const ChatInput = () => {
   return (
@@ -9,4 +11,4 @@ const ChatInput = () => {
   )
 }
 
-export default ChatInput
+export default ChatInput;
