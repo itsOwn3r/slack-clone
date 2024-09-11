@@ -1,5 +1,5 @@
 "use client";
-import React, { MutableRefObject, useEffect, useLayoutEffect, useRef } from 'react'
+import React, { MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Quill, { type QuillOptions } from "quill";
 
 import "quill/dist/quill.snow.css"
@@ -9,6 +9,7 @@ import { ImageIcon, Smile } from 'lucide-react';
 import { MdSend } from "react-icons/md";
 import Hint from './hint';
 import { Delta, Op } from 'quill/core';
+import { cn } from '@/lib/utils';
 
 type EditorValue = { 
     image: File | null;
@@ -26,6 +27,8 @@ interface EditorProps {
 }
 
 const Editor = ({ variant = "create", onSubmit, defaultValue = [], disabled = false, innerRef, onCancel, placeholder = "Write Something..." }: EditorProps) => {
+    const [text, setText] = useState("");
+    const [isToolbarVisible, setIsToolbarVisible] = useState(true);
     
     const submitRef = useRef(onSubmit);
     const placeholderRef = useRef(placeholder);
@@ -50,55 +53,114 @@ const Editor = ({ variant = "create", onSubmit, defaultValue = [], disabled = fa
 
         const options: QuillOptions = {
             theme: "snow",
-            placeholder: placeholderRef.current
+            placeholder: placeholderRef.current,
+            modules: {
+                toolbar: [
+                    ["bold", "italic", "strike"],
+                    ["link"],
+                    [{ list: "ordered" }, { list: "bullet" }]
+                ],
+                keyboard: {
+                    bindings: { 
+                        enter: {
+                            key: "Enter",
+                            handler: () => {
+                                return;
+                            }
+                        },
+                        shift_enter: {
+                            key: "Enter",
+                            shiftKey: true,
+                            handler: () => {
+                                quill.insertText(quill.getSelection()?.index || 0, "\n")
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         const quill = new Quill(editorContainer, options);
 
+        quillRef.current = quill;
+        quillRef.current.focus();
+
+        if (innerRef) {
+            innerRef.current = quill;
+        }
+
+        quill.setContents(defaultValueRef.current);
+        setText(quill.getText());
+
+        quill.on(Quill.events.TEXT_CHANGE, () => {
+            setText(quill.getText());
+        });
+
         return () => {
+            quill.off(Quill.events.TEXT_CHANGE);
+
             if (container) {
                 container.innerHTML = "";
             }
+
+            if (quillRef.current) {
+                quillRef.current = null;
+            }
+
+            if (innerRef) {
+                innerRef.current = null;
+            }
+
         }
 
-    }, [])
+    }, [innerRef])
+
+    const toggleToolbar = () => {
+        setIsToolbarVisible((current) => !current);
+        const toolbarElement = containerRef.current?.querySelector(".ql-toolbar");
+
+        if (toolbarElement) {
+            toolbarElement.classList.toggle("hidden");
+        }
+    }
+
+    const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
   return (
     <div className='flex flex-col'>
         <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
             <div ref={containerRef} className='h-full ql-custom' />
             <div className='flex px-2 pb-2 z-[5]'>
-                <Hint label='Hide formatting'>
-                    <Button disabled={false} size="iconSm" variant="ghost" onClick={() => {}}>
+                <Hint label={isToolbarVisible ? 'Hide formatting' : "Show formatting"}>
+                    <Button disabled={disabled} size="iconSm" variant="ghost" onClick={toggleToolbar}>
                     <PiTextAa className='size-4' />
                 </Button>
                 </Hint>
 
                 <Hint label='Emoji'>
-                    <Button disabled={false} size="iconSm" variant="ghost" onClick={() => {}}>
+                    <Button disabled={disabled} size="iconSm" variant="ghost" onClick={() => {}}>
                     <Smile className='size-4' />
                     </Button>
                 </Hint>
 
                 {variant === "create" && (<>
                 <Hint label='Image'>
-                    <Button disabled={false} size="iconSm" variant="ghost" onClick={() => {}}>
+                    <Button size="iconSm" variant="ghost" disabled={disabled} onClick={() => {}}>
                         <ImageIcon className='size-4' />
                     </Button>
                 </Hint></>)}
 
                 {variant === "update" && (
                     <div className="flex items-center ml-auto gap-x-2">
-                        <Button variant="outline" size="sm" onClick={() => {}} disabled={false} >Cancel</Button>
-                        <Button className='bg-[#007a5a] hover:bg-[#007a5a]/80 text-white' size="sm" onClick={() => {}} disabled={false} >Save</Button>
+                        <Button variant="outline" size="sm" onClick={() => {}} disabled={disabled} >Cancel</Button>
+                        <Button className='bg-[#007a5a] hover:bg-[#007a5a]/80 text-white' size="sm" onClick={() => {}} disabled={disabled || isEmpty} >Save</Button>
                     </div>
                 )}
                 {variant === "create" && (
-                <>
-                    <Button className='ml-auto bg-[#007a5a] hover:bg-[#007a5a]/80 text-white' disabled={false} size="iconSm" onClick={() => {}}>
+                    <Button disabled={disabled || isEmpty} className={cn('ml-auto', isEmpty ? "bg-white hover:bg-white/80 text-muted-foreground" : " bg-[#007a5a] hover:bg-[#007a5a]/80 text-white")} size="iconSm" onClick={() => {}}>
                         <MdSend className='size-4' />
                     </Button>
-                </>)}
+                )}
             </div>
         </div>
 

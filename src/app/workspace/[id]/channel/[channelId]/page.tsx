@@ -41,7 +41,7 @@ const ChannelIdPage = async ({ params }: { params: { id: string, channelId: stri
     <div className='flex flex-col h-full'>
       <ChannelHeader isAdmin={isAdmin} channelName={findChannel.name} channelId={findChannel.id} workspaceId={findChannel.workspaceId} />
       <div className="flex-1" />
-      <ChatInput />
+      <ChatInput placeholder={`Message #${findChannel.name}`} />
     </div>
   )
 }
