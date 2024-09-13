@@ -13,9 +13,22 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
   
   const editorRef = useRef<Quill | null>(null);
 
+
+  const handleSubmit = ({
+    body,
+    image
+  }: {
+    body: string,
+    image: File | null
+  }) => {
+
+    console.log({ body, image});
+
+  }
+
   return (
     <div className='px-5 w-full'>
-        <Editor innerRef={editorRef} disabled={false} onSubmit={() => {}} variant='create' placeholder={placeholder} />
+        <Editor innerRef={editorRef} disabled={false} onSubmit={handleSubmit} variant='create' placeholder={placeholder} />
     </div>
   )
 }
