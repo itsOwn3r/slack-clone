@@ -21,6 +21,7 @@ model User {
   Workspaces Workspaces[]
   Members    Members[]
   Channels   Channels[]
+  Messages   Messages[]
 }
 
 model Workspaces {
@@ -64,20 +65,23 @@ model Members {
 }
 
 model Messages {
-  id              String     @id @default(uuid())
-  body            String
-  image           String?
-  memberId        Int
-  member          Members    @relation(fields: [memberId], references: [id])
-  workspaceId     String
-  workspace       Workspaces @relation(fields: [workspaceId], references: [id])
-  channelId       String?
-  channel         Channels?  @relation(fields: [channelId], references: [id])
-  parentMessageId String
-  parentMessage   Messages   @relation(name: "parentMessage" ,fields: [parentMessageId], references: [id])
-// TODO: add conversationId
+  id          String     @id @default(cuid())
+  body        String
+  image       String?
+  memberId    Int
+  member      Members    @relation(fields: [memberId], references: [id])
+  workspaceId String
+  workspace   Workspaces @relation(fields: [workspaceId], references: [id])
+  channelId   String?
+  channel     Channels?  @relation(fields: [channelId], references: [id])
+  parentMessageId String?
+  parentMessage   Messages?   @relation(name: "parentMessage", fields: [parentMessageId], references: [id])
+  // TODO: add conversationId
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+
   updatedAt DateTime @updatedAt
-  Messages Messages[] @relation(name: "parentMessage")
+  Messages        Messages[] @relation(name: "parentMessage")
 }
 
 enum MemberRole {

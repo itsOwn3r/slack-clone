@@ -147,7 +147,7 @@ const Editor = ({ variant = "create", onSubmit, defaultValue = [], disabled = fa
   return (
     <div className='flex flex-col'>
         <input type="file" accept='image/*' ref={imageElementRef} onChange={(event) => setImage(event.target.files![0])} className='hidden' />
-        <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
+        <div className={cn("flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white", disabled && "opacity-50")}>
             <div ref={containerRef} className='h-full ql-custom' />
             {!!image && (
                 <div className='p-2'>

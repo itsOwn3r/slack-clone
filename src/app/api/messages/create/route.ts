@@ -13,32 +13,46 @@ export async function POST(req: Request){
 
         const data = await req.json();
 
-        const { body, image, workspaceId, channelId, memberId, parentMessageId } = data;
+        const { body, image, workspaceId, channelId, parentMessageId } = data;
 
-        if (!body || !memberId) {
-            return NextResponse.json({ success: false, message: "Name and memberId is required!" });
+        if (!body || !workspaceId) {
+            return NextResponse.json({ success: false, message: "Name and workspaceId is required!" });
+        }
+
+        const findMember = await db.members.findFirst({
+            where: {
+                userId: user.user.id,
+                workspaceId
+            }
+        })
+
+        if (!findMember) {
+            return NextResponse.json({ success: false, message: "You are not a member of that Workspace!" });
         }
 
         const createMessage = await db.messages.create({
             data: {
                 body,
                 channelId,
-                image,
-                memberId,
-                parentMessageId,
-                workspaceId
+                // image,
+                memberId: findMember.id,
+                // parentMessageId,
+                workspaceId,
+                userId: user.user.id,
+
             }
         })
 
         if (!createMessage) {
-            return NextResponse.json({ success: false, message: "You are not admin!" });
+            return NextResponse.json({ success: false, message: "Failed to send a message!" });
         }
 
 
 
-        return NextResponse.json({ success: true, message: "Channel created!" });
+        return NextResponse.json({ success: true, message: "Successful!", messageId: createMessage.id });
 
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ success: false, message: "Something went wrong!" });
     }
 }
