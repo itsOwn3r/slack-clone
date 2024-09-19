@@ -34,11 +34,13 @@ export async function POST(req: Request){
             data: {
                 body,
                 channelId,
+                senderName: user.user.name,
                 // image,
                 memberId: findMember.id,
-                // parentMessageId,
                 workspaceId,
                 userId: user.user.id,
+                time: Math.ceil(Date.now() / 1000),
+                conversationId: parentMessageId ? parentMessageId : undefined
 
             }
         })

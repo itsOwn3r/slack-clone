@@ -35,10 +35,12 @@ model Workspaces {
 
   time Int
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Channels  Channels[]
-  Messages  Messages[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Channels     Channels[]
+  Messages     Messages[]
+  Conversation Conversation[]
+  Reactions    Reactions[]
 }
 
 model Channels {
@@ -60,28 +62,66 @@ model Members {
   workspaceId String
   workspace   Workspaces @relation(fields: [workspaceId], references: [id])
 
-  role     MemberRole
-  Messages Messages[]
+  role            MemberRole
+  Messages        Messages[]
+  Conversation    Conversation[] @relation(name: "memberOne")
+  ConversationTwo Conversation[] @relation(name: "memberTwo")
+  Reactions       Reactions[]
 }
 
 model Messages {
+  id              String     @id @default(cuid())
+  body            String
+  senderName      String
+  image           String?
+  memberId        Int
+  member          Members    @relation(fields: [memberId], references: [id])
+  workspaceId     String
+  workspace       Workspaces @relation(fields: [workspaceId], references: [id])
+  channelId       String?
+  channel         Channels?  @relation(fields: [channelId], references: [id])
+  parentMessageId String?
+  parentMessage   Messages?  @relation(name: "parentMessage", fields: [parentMessageId], references: [id])
+
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  time Int
+
+  updatedAt DateTime    @updatedAt
+  Messages  Messages[]  @relation(name: "parentMessage")
+  Reactions Reactions[]
+}
+
+model Conversation {
   id          String     @id @default(cuid())
-  body        String
-  image       String?
-  memberId    Int
-  member      Members    @relation(fields: [memberId], references: [id])
   workspaceId String
   workspace   Workspaces @relation(fields: [workspaceId], references: [id])
-  channelId   String?
-  channel     Channels?  @relation(fields: [channelId], references: [id])
-  parentMessageId String?
-  parentMessage   Messages?   @relation(name: "parentMessage", fields: [parentMessageId], references: [id])
-  // TODO: add conversationId
-  userId      String
-  user        User       @relation(fields: [userId], references: [id])
 
-  updatedAt DateTime @updatedAt
-  Messages        Messages[] @relation(name: "parentMessage")
+  memberOneId Int
+  member      Members @relation(name: "memberOne", fields: [memberOneId], references: [id])
+
+  memberTwoId Int
+  memberTwo   Members @relation(name: "memberTwo", fields: [memberTwoId], references: [id])
+
+  Messages Messages[]
+}
+
+model Reactions {
+  id    Int    @id @default(autoincrement())
+  value String
+
+  workspaceId String
+  workspace   Workspaces @relation(fields: [workspaceId], references: [id])
+
+  messageId String
+  message   Messages @relation(fields: [messageId], references: [id])
+
+  memberId Int
+  member   Members @relation(fields: [memberId], references: [id])
 }
 
 enum MemberRole {
