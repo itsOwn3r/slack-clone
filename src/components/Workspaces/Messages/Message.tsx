@@ -51,7 +51,7 @@ const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditin
         <div className='flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative'>
             <div className="flex items-center gap-2">
                 <button>
-                    <Avatar>
+                    <Avatar className='rounded-md'>
                         <AvatarImage src="/images/124599.jpg" />
                         <AvatarFallback>
                             {avatarFallback}

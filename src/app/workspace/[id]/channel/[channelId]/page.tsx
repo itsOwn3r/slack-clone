@@ -20,6 +20,12 @@ const ChannelIdPage = async ({ params }: { params: { id: string, channelId: stri
       },
       include: {
         Messages: {
+          orderBy: {
+            time: "desc"
+          },
+          include: {
+            user: true
+          },
           take: 20
         },
         workspace: {

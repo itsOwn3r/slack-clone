@@ -1,7 +1,9 @@
 import React from 'react';
 import { Messages } from '@prisma/client';
-import { format, isToday, isYesterday } from "date-fns";
+import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import Message from './Message';
+
+const TIME_THRESHOLD = 5;
 
 const formatDateLabel = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -43,9 +45,14 @@ const MessageList = ({ memberName, channelName, data, variant = "channel" }: { m
                     </span>
                 </div>
                 {messages.map((message, index) => {
+
+                    const prevMessage = messages[index - 1];
+                    // @ts-expect-error needs to add type of the user to messages object
+                    const isCompact = prevMessage && prevMessage.user.id === message.user.id && differenceInMinutes(new Date(message.time), new Date(prevMessage.time)) < TIME_THRESHOLD;
+
                     return (
                         <div key={message.id}>
-                            <Message key={message.id} id={message.id} isEditing={false} isCompact={false} setEditingId={() => {}} memberId={message.memberId} authorName={message.senderName} isAuthor={false} body={message.body} updatedAt={message.updatedAt} createdAt={new Date(Math.ceil(message.time * 1000))}  />
+                            <Message key={message.id} id={message.id} isEditing={false} isCompact={isCompact} setEditingId={() => {}} memberId={message.memberId} authorName={message.senderName} isAuthor={false} body={message.body} updatedAt={message.updatedAt} createdAt={new Date(Math.ceil(message.time * 1000))}  />
                         </div>
                     )
                 })}
