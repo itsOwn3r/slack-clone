@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { format, isToday, isYesterday } from 'date-fns';
 import Hint from '@/components/hint';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Toolbar from '../Channels/Toolbar';
 
 const Rendered = dynamic(() => import("@/components/Workspaces/Messages/Rendered"), { ssr: false })
 
@@ -80,6 +81,15 @@ const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditin
 
             </div>
 
+        {!isEditing && (
+            <Toolbar
+                isAuthor={isAuthor}
+                isPending={false}
+                handleEdit={() => setEditingId(id)}
+                handleDelete={() => {}}
+
+            />
+        )}
         </div>
     )
     }

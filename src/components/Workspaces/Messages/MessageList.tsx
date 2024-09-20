@@ -1,7 +1,9 @@
-import React from 'react';
-import { Messages } from '@prisma/client';
+"use client"
+import React, { useEffect, useState } from 'react';
+import { Members, Messages } from '@prisma/client';
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import Message from './Message';
+import { useParams } from 'next/navigation';
 
 const TIME_THRESHOLD = 5;
 
@@ -16,6 +18,36 @@ const formatDateLabel = (dateStr: string) => {
 
 const MessageList = ({ memberName, channelName, data, variant = "channel" }: { memberName: string, channelName: string, data: Messages[], variant?: "channel" | "thread" | "conversation" }) => {
 
+    const [editingId, setEditingId] = useState<string | null>(null);
+
+    const [currentMember, setCurrentMember] = useState<null | undefined |  Members>(null);
+
+
+    const params = useParams()
+    console.log(params);
+
+    
+  useEffect(() => {
+    async function findMember() {
+
+      const response = await fetch("/api/workspace/member", {
+        method: "POST",
+        body: JSON.stringify({ id: params.id})
+      })
+
+      const data = await response.json();
+
+      if (data.success) {
+        setCurrentMember(data.member);
+      } else {
+        setCurrentMember(undefined);
+      }
+
+
+    }
+    findMember();
+
+  }, [params.id])
 
     const groupedMessages = data?.reduce((groups, message) => {
 
@@ -52,7 +84,7 @@ const MessageList = ({ memberName, channelName, data, variant = "channel" }: { m
 
                     return (
                         <div key={message.id}>
-                            <Message key={message.id} id={message.id} isEditing={false} isCompact={isCompact} setEditingId={() => {}} memberId={message.memberId} authorName={message.senderName} isAuthor={false} body={message.body} updatedAt={message.updatedAt} createdAt={new Date(Math.ceil(message.time * 1000))}  />
+                            <Message key={message.id} id={message.id} isEditing={editingId === message.id} isCompact={isCompact} setEditingId={setEditingId} memberId={message.memberId} authorName={message.senderName} isAuthor={(currentMember?.id || "") === message.userId} body={message.body} updatedAt={message.updatedAt} createdAt={new Date(Math.ceil(message.time * 1000))}  />
                         </div>
                     )
                 })}
