@@ -13,43 +13,31 @@ export async function POST(req: Request){
 
         const data = await req.json();
 
-        const { name, channelId, workspaceId } = data;
+        const { id, body, channelId, workspaceId } = data;
 
-        if (!name || !channelId || !workspaceId) {
-            return NextResponse.json({ success: false, message: "Name and Channel Id and Workspace Id is required!" });
+        if (!id || !channelId || !workspaceId || !body) {
+            return NextResponse.json({ success: false, message: "Message Id and Channel Id and Workspace Id is required!" });
         }
 
-        const sanatizeName = name.replaceAll(" ", "-");
-
-        const findWorkspace = await db.workspaces.findUnique({
+        const editMessage = await db.messages.update({
             where: {
-                id: workspaceId
-            },
-            include: {
-                Members: {
-                    where: {
-                        userId: user.user.id
-                    }
-                }
-            }
-        })
-
-        if (!findWorkspace || findWorkspace.Members[0].role !== "admin") {
-            return NextResponse.json({ success: false, message: "Workspace not found! Or you're not admin!" });
-        }
-
-        const editChannel = await db.channels.update({
-            where:{
-                id: channelId,
+                id: id,
                 userId: user.user.id,
+                workspaceId,
+                channelId
             },
             data: {
-                name: sanatizeName
+                body,
+                updatedAt: new Date()
             }
         })
 
+        if (!editMessage) {
+        return NextResponse.json({ success: false, message: "Message Not Found!" });            
+        }
 
-        return NextResponse.json({ success: true, path: `/workspace/${editChannel.workspaceId}/channel/${editChannel.id}`, message: "Channel Edited!" });
+
+        return NextResponse.json({ success: true, message: "Message Edited!" });
 
     } catch (error) {
         return NextResponse.json({ success: false, message: "Something went wrong!" });

@@ -23,13 +23,13 @@ const Toolbar = ({ isAuthor, isPending, handleEdit, handleDelete }: { isAuthor: 
             {isAuthor && (
                 <>
                 <Hint label='Edit Message'>
-                    <Button variant="ghost" size="iconSm" disabled={isPending}>
+                    <Button variant="ghost" size="iconSm" disabled={isPending} onClick={handleEdit}>
                         <Pencil className='size-4' />
                     </Button>
                 </Hint>
 
                 <Hint label='Delete Message'>
-                    <Button variant="ghost" size="iconSm" disabled={isPending}>
+                    <Button variant="ghost" size="iconSm" disabled={isPending} onClick={handleDelete}>
                         <TrashIcon className='size-4' />
                     </Button>
                 </Hint>

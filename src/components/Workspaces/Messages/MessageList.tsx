@@ -23,9 +23,7 @@ const MessageList = ({ memberName, channelName, data, variant = "channel" }: { m
     const [currentMember, setCurrentMember] = useState<null | undefined |  Members>(null);
 
 
-    const params = useParams()
-    console.log(params);
-
+    const params = useParams();
     
   useEffect(() => {
     async function findMember() {
@@ -78,13 +76,12 @@ const MessageList = ({ memberName, channelName, data, variant = "channel" }: { m
                 </div>
                 {messages.map((message, index) => {
 
-                    const prevMessage = messages[index - 1];
+                    const prevMessage = index === 0 ? messages[0] : messages[index - 1];
                     // @ts-expect-error needs to add type of the user to messages object
-                    const isCompact = prevMessage && prevMessage.user.id === message.user.id && differenceInMinutes(new Date(message.time), new Date(prevMessage.time)) < TIME_THRESHOLD;
-
+                    const isCompact = prevMessage && prevMessage.user.id === message.user.id && differenceInMinutes(new Date(message.time * 1000), new Date(prevMessage.time * 1000)) < TIME_THRESHOLD;
                     return (
                         <div key={message.id}>
-                            <Message key={message.id} id={message.id} isEditing={editingId === message.id} isCompact={isCompact} setEditingId={setEditingId} memberId={message.memberId} authorName={message.senderName} isAuthor={(currentMember?.id || "") === message.userId} body={message.body} updatedAt={message.updatedAt} createdAt={new Date(Math.ceil(message.time * 1000))}  />
+                            <Message key={message.id} id={message.id} isEditing={editingId === message.id} isCompact={isCompact} setEditingId={setEditingId} memberId={message.memberId} authorName={message.senderName} isAuthor={(currentMember?.userId || "") === message.userId} body={message.body} updatedAt={message.updatedAt} createdAt={message.time}  />
                         </div>
                     )
                 })}
