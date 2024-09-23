@@ -3,7 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Members, Messages } from '@prisma/client';
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import Message from './Message';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { toast } from 'sonner';
+import { Loader } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const TIME_THRESHOLD = 5;
 
@@ -16,14 +20,47 @@ const formatDateLabel = (dateStr: string) => {
     return format(date, "EEEE, MMMM d")
 }
 
-const MessageList = ({ memberName, channelName, data, variant = "channel" }: { memberName: string, channelName: string, data: Messages[], variant?: "channel" | "thread" | "conversation" }) => {
+const MessageList = ({ memberName, channelName, data, variant = "channel", maxPages }: { memberName: string, channelName: string, data: Messages[], variant?: "channel" | "thread" | "conversation", maxPages: number }) => {
 
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
 
     const [currentMember, setCurrentMember] = useState<null | undefined |  Members>(null);
 
+    const router = useRouter();
+
+    const { replace } = useRouter();
+
+    const pathname = usePathname();
 
     const params = useParams();
+
+    const searchParams = useSearchParams();
+
+    const page = searchParams.get("page");
+
+    const loadMore = async () => {
+      setIsLoadingMore(true);
+      try {
+
+        if (Number.isNaN(page)) {
+          return;
+        }
+
+        const params = new URLSearchParams(searchParams);
+
+        const nextPage = (page === undefined || page === null) ? 2 : (Number(page) + 1);
+
+        params.set('page', nextPage.toString());
+        replace(`${pathname}?${params.toString()}`);
+      } catch (error) {
+        toast.error("Something went wrong!");
+      } finally {
+        setIsLoadingMore(false);
+      }
+    }
+
     
   useEffect(() => {
     async function findMember() {
@@ -44,7 +81,7 @@ const MessageList = ({ memberName, channelName, data, variant = "channel" }: { m
 
     }
     findMember();
-
+    setIsLoading(false);
   }, [params.id])
 
     const groupedMessages = data?.reduce((groups, message) => {
@@ -86,8 +123,23 @@ const MessageList = ({ memberName, channelName, data, variant = "channel" }: { m
                         </div>
                     )
                 })}
+
             </div>
         ))}
+
+
+      {isLoadingMore && (
+                    <div className='text-center my-2 relative'>
+                      <hr className='absolute top-1/2 left-0 right-0 border-t border-gray-300' />
+                      <span className='relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm'>
+                        <Loader className='size-4 animate-spin' />
+                      </span>
+                    </div>
+                )}
+
+
+      {(!isLoading && !isLoadingMore) && <div className='w-full flex justify-center items-center mt-4'><Button disabled={isLoadingMore} className={cn('w-3/5', isLoadingMore && "bg-muted-foreground/30")} variant="outline" onClick={() => loadMore()}> Load more </Button></div>}
+      
     </div>
   )
 }

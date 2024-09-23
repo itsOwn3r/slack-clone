@@ -41,7 +41,6 @@ const InviteModal = ({ name, open, setOpen, workspaceId, joinCode }: Preferences
     // },[isLoading])
 
 
-    console.log(safeInviteCode);
     const [ConfirmDialog, confirm] = useConfirm(`Deleting ${name}`, "You sure you want to delete this Workspace?");
 
     const handleClose = () => {
@@ -116,7 +115,7 @@ const InviteModal = ({ name, open, setOpen, workspaceId, joinCode }: Preferences
         }
 
     
-    const copyHanle = () => {
+    const copyHandle = () => {
         const inviteLink = `${window.location.origin}/join/${params.id}`;
         navigator.clipboard.writeText(inviteLink);
         toast.success("Invite link copied to clipboard!", {
@@ -141,7 +140,7 @@ const InviteModal = ({ name, open, setOpen, workspaceId, joinCode }: Preferences
                 </DialogHeader>
                 <div className="flex flex-col gap-y-4 items-center justify-center py-10">
                     <p className='text-4xl font-bold tracking-widest'>{safeInviteCode}</p>
-                    <Button onClick={copyHanle} variant="ghost" size="sm" className='outline-none'>Copy Link <CopyIcon className='size-4 ml-2' /></Button>
+                    <Button onClick={copyHandle} variant="ghost" size="sm" className='outline-none'>Copy Link <CopyIcon className='size-4 ml-2' /></Button>
                 </div>
                 <div className="flex items-center justify-between w-full pb-2 px-4">
                     <Button onClick={revokeJoinCode} variant="outline" size="sm" className='outline-none'>New Invite Code <RefreshCcw className='size-4 ml-2' /></Button>
