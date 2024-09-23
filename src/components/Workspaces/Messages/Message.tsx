@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { format, isToday, isYesterday } from 'date-fns';
 import Hint from '@/components/hint';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Toolbar from '../Channels/Toolbar';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const Editor = dynamic(() => import("@/components/Editor"), { ssr: false })
 
@@ -29,6 +31,36 @@ const formatFullTime = (date: number) => {
 
 const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditingId, updatedAt, authorName = "Member", isCompact}: MessageProps) => {
 
+    const router = useRouter();
+
+    const [isUpdatingMessage, setIsUpdatingMessage] = useState(false);
+
+    const handleUpdate = async ({ body }: { body: string }) => {
+        try {
+            setIsUpdatingMessage(true);
+
+            const request = await fetch("/api/messages/edit", {
+                method: "POST",
+                body: JSON.stringify({ id, body })
+            })
+
+            const response = await request.json();
+
+            if (response.success) {
+                toast.success("Message Edited")
+                setEditingId(null);
+                router.refresh();
+            } else {
+                
+            }
+        } catch (error) {
+                toast.success((error as Error).message)
+            } finally {
+                setIsUpdatingMessage(false);
+            }
+        }
+
+
     if (isCompact) {
         return (
             <div className={cn('flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative', isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]")}>
@@ -38,17 +70,30 @@ const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditin
                         {format(createdAt * 1000, "hh:mm")}
                     </button>
                 </Hint>
+                {isEditing ? (
+                    <div className='w-full h-full'>
+                        <Editor 
+                        onSubmit={handleUpdate}
+                        disabled={isUpdatingMessage}
+                        defaultValue={JSON.parse(body)}
+                        onCancel={() => setEditingId(null)}
+                        variant='update'
+                        />
+                    </div>
+                ) : (
                 <div className='flex flex-col w-full'>
                     <Rendered value={body} />
                     {createdAt !== Math.ceil((updatedAt.getTime() / 1000)) ? (
                     <span className='text-xs text-muted-foreground'>(edited)</span>
                 ) : null}
                 </div>
+            )}
+
             </div>
             {!isEditing && (
             <Toolbar
                 isAuthor={isAuthor}
-                isPending={false}
+                isPending={isUpdatingMessage}
                 handleEdit={() => setEditingId(id)}
                 handleDelete={() => {}}
             />
@@ -60,7 +105,7 @@ const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditin
         const avatarFallback = authorName.charAt(0).toUpperCase();
 
         return (
-        <div className='flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative'>
+        <div className={cn('flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative', isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]")}>
             <div className="flex items-center gap-2">
                 <button>
                     <Avatar className='rounded-md'>
@@ -70,32 +115,44 @@ const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditin
                         </AvatarFallback>
                     </Avatar>
                 </button>
-            </div>
-
-            <div className='flex flex-col w-full overflow-hidden'>
-                <div className='text-sm'>
-                    <button className='font-bold text-primary hover:underline'>
-                        {authorName}
-                    </button>
-                    <span> &nbsp;&nbsp; </span>
-                    <Hint label={formatFullTime(createdAt * 1000)}>
-                        <button className='text-xs text-muted-foreground hover:underline'>
-                        {format(createdAt * 1000, "h:mm a")}
+                {isEditing ? (
+                    <div className='w-full h-full'>
+                        <Editor 
+                        onSubmit={handleUpdate}
+                        disabled={isUpdatingMessage}
+                        defaultValue={JSON.parse(body)}
+                        onCancel={() => setEditingId(null)}
+                        variant='update'
+                            />
+                    </div>
+                ) : (
+                <div className='flex flex-col w-full overflow-hidden'>
+                    <div className='text-sm'>
+                        <button className='font-bold text-primary hover:underline'>
+                            {authorName}
                         </button>
-                    </Hint>
-                </div>
-                <Rendered value={body} />
-
-                {createdAt !== Math.ceil((updatedAt.getTime() / 1000)) ? (
-                    <span className='text-xs text-muted-foreground'>(edited)</span>
-                ) : null}
-
+                        <span> &nbsp;&nbsp; </span>
+                        <Hint label={formatFullTime(createdAt * 1000)}>
+                            <button className='text-xs text-muted-foreground hover:underline'>
+                            {format(createdAt * 1000, "h:mm a")}
+                            </button>
+                        </Hint>
+                    </div>
+                    <Rendered value={body} />
+    
+                    {createdAt !== Math.ceil((updatedAt.getTime() / 1000)) ? (
+                        <span className='text-xs text-muted-foreground'>(edited)</span>
+                    ) : null}
+    
+                </div>)}
             </div>
+
+
 
         {!isEditing && (
             <Toolbar
                 isAuthor={isAuthor}
-                isPending={false}
+                isPending={isUpdatingMessage}
                 handleEdit={() => setEditingId(id)}
                 handleDelete={() => {}}
             />

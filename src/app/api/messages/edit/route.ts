@@ -13,18 +13,16 @@ export async function POST(req: Request){
 
         const data = await req.json();
 
-        const { id, body, channelId, workspaceId } = data;
+        const { id, body } = data;
 
-        if (!id || !channelId || !workspaceId || !body) {
-            return NextResponse.json({ success: false, message: "Message Id and Channel Id and Workspace Id is required!" });
+        if (!id || !body) {
+            return NextResponse.json({ success: false, message: "Message Id is required!" });
         }
 
         const editMessage = await db.messages.update({
             where: {
                 id: id,
                 userId: user.user.id,
-                workspaceId,
-                channelId
             },
             data: {
                 body,
