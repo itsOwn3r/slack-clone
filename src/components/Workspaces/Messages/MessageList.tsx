@@ -76,9 +76,10 @@ const MessageList = ({ memberName, channelName, data, variant = "channel" }: { m
                 </div>
                 {messages.map((message, index) => {
 
-                    const prevMessage = index === 0 ? messages[0] : messages[index - 1];
+                    const prevMessage = index === 0 ? null : messages[index - 1];
                     // @ts-expect-error needs to add type of the user to messages object
-                    const isCompact = prevMessage && prevMessage.user.id === message.user.id && differenceInMinutes(new Date(message.time * 1000), new Date(prevMessage.time * 1000)) < TIME_THRESHOLD;
+                    const isCompact = (prevMessage && (prevMessage.user.id === message.user.id && (differenceInMinutes(new Date(message.time * 1000), new Date(prevMessage.time * 1000)) < TIME_THRESHOLD))) ? true : false;
+
                     return (
                         <div key={message.id}>
                             <Message key={message.id} id={message.id} isEditing={editingId === message.id} isCompact={isCompact} setEditingId={setEditingId} memberId={message.memberId} authorName={message.senderName} isAuthor={(currentMember?.userId || "") === message.userId} body={message.body} updatedAt={message.updatedAt} createdAt={message.time}  />
