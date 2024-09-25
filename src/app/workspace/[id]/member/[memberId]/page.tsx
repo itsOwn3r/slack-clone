@@ -1,19 +1,18 @@
-"use client";
+// "use client";
+import { auth } from '@/auth';
 import Conversation from '@/components/Conversation/Conversation';
+import db from '@/lib/db';
 import { Members } from '@prisma/client';
 import { AlertTriangle, Loader } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { redirect, useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
-const ConversationPage = () => {
+const ConversationPage = async ({ params, searchParams }: { params: { id: string, memberId: string }, searchParams: any  }) => {
 
-    const [currentMember, setCurrentMember] = useState<null | undefined |  Members>(null);
-    const [otherMember, setOtherMember] = useState<null |  Members>(null);
-    const [conversationId, setConversationId] = useState<null | string>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
 
     
-    const params = useParams();
+    // const params = useParams();
 
     const workspaceId = params.id;
     const memberId = params.memberId;
@@ -21,79 +20,70 @@ const ConversationPage = () => {
     console.log(workspaceId);
     console.log(memberId);
 
-    useEffect(() => {
-        async function findMember() {
-    
-          const response = await fetch("/api/conversation/getorcreate", {
-            method: "POST",
-            body: JSON.stringify({ workspaceId, memberId})
-          })
-    
-          const data = await response.json();
-    
-          if (data.success) {
-            setConversationId(data.conversationId);
-          } else {
-            setConversationId(null);
-          }
+    let conversationId;
+        
 
-          
-    
-        // //   const getOtherMember = await fetch("/api/workspace/getothermember", {
-        //   const getOtherMember = await fetch("/api/workspace/member", {
-        //     method: "POST",
-        //     body: JSON.stringify({ id: memberId})
-        //   })
-    
-        //   const allMembers = await getOtherMember.json();
-    
-        //   if (allMembers.success) {
-        //     setOtherMember(allMembers.members);
-        //   } else {
-        //     setOtherMember(null);
-        //   }
-    
-        //   const getChannels = await fetch("/api/channels/getchannels", {
-        //     method: "POST",
-        //     body: JSON.stringify({ id: params.id})
-        //   })
-    
-        //   const channel = await getChannels.json();
-    
-        //   if (channel.success) {
-        //     setChannels(channel.channels);
-        //   } else {
-        //     setChannels(undefined);
-        //   }
-    
-        //   const getWorkspace = await fetch("/api/workspace/getworkspace", {
-        //     method: "POST",
-        //     body: JSON.stringify({ id: params.id})
-        //   })
-    
-        //   const ws = await getWorkspace.json();
-    
-        //   if (ws.success) {
-        //     setWorkspace(ws.workspace);
-        //   } else {
-        //     setWorkspace(undefined);
-        //   }
-    
-        }
-        findMember();
+    const user = await auth();
 
-        setIsLoading(false);
-    
-      }, [memberId, workspaceId])
+    if (!user) {
+        return redirect("/login");
+    }
 
 
-      if (isLoading) {
-        return (
-            <div className="flex h-full items-center justify-center">
-                <Loader className='size-6 animate-spin text-muted-foreground' />
-            </div>
-        )
+    const currentMember = await db.members.findFirst({
+      where: {
+          userId: user.user.id,
+          workspaceId: workspaceId,
+      },
+      include: {
+        user: true
       }
+  });
+
+  const otherMember = Number(memberId);
+
+  const findOtherMember = await db.members.findUnique({
+    where: {
+      id: otherMember,
+      workspaceId: workspaceId,
+    },
+    include: {
+      user: true
+    }
+  })
+
+  const findConversation = await db.conversation.findFirst({
+      where: {
+          OR: [
+              {
+                  memberOneId: currentMember?.id,
+                  memberTwoId: otherMember,
+                  workspaceId: workspaceId
+              },
+              {
+                  memberTwoId: currentMember?.id,
+                  memberOneId: otherMember,
+                  workspaceId: workspaceId
+              }
+          ]
+      }
+  })
+
+  if (findConversation) {
+    conversationId = findConversation.id
+  } else {
+      const createConversation = await db.conversation.create({
+          data: {
+            memberOneId: currentMember?.id ? currentMember.id : 0,
+            memberTwoId: otherMember,
+            workspaceId: workspaceId,
+          }
+      })
+
+      conversationId = createConversation.id
+  }
+
+
 
       if (!conversationId) {
         return (
@@ -104,8 +94,79 @@ const ConversationPage = () => {
         )
       }
 
+      
+      
+      const getTake = () => {
+      if (Number.isNaN(searchParams.page) || searchParams.page === undefined) {
+          return 20;
+        } else if(Number(searchParams.page) < 2){
+        return 20;
+      }
+      else {
+          return (Number(searchParams.page)) * 20;
+      }
+    }
+    
+    console.log(getTake());
+    /*
+
+
+    const findChannel = await db.channels.findUnique({
+      where: {
+        id: params.channelId,
+        workspaceId: params.id
+      },
+      include: {
+        Messages: {
+          orderBy: {
+            time: "desc"
+          },
+          include: {
+            user: true
+          },
+          take: getTake()
+          // skip: searchParams.page ? (Number(searchParams.page) < 2 ? 0 : Number(searchParams.page) - 1) * 20 : 0
+        },
+        workspace: {
+          include: {
+            Members: {
+              where: {
+                userId: user.user.id
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!findChannel) {
+      return notFound();
+    }
+
+
+    const isAdmin = findChannel.workspace.Members[0].role === "admin";
+
+    */
+
+    const allMessages = await db.messages.findMany({
+      where: {
+        conversationId
+      },
+      orderBy: {
+        time: "desc"
+      },
+      take: getTake()
+    })
+     const countAllMessages = await db.messages.count({
+       where: {
+         conversationId
+       }
+     })
+ 
+     const maxPages = Math.ceil(countAllMessages / 20);
+
   return (
-    <Conversation id={conversationId} />
+    <Conversation id={conversationId} allMessages={allMessages} name={findOtherMember?.user.name} currentMemberName={currentMember?.user.name} maxPages={maxPages} />
   )
 }
 

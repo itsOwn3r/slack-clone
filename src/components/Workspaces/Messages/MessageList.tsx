@@ -20,7 +20,7 @@ const formatDateLabel = (dateStr: string) => {
     return format(date, "EEEE, MMMM d")
 }
 
-const MessageList = ({ memberName, channelName, data, variant = "channel", maxPages }: { memberName: string, channelName: string, data: Messages[], variant?: "channel" | "thread" | "conversation", maxPages: number }) => {
+const MessageList = ({ memberName, channelName, data, variant = "channel", maxPages }: { memberName: string, channelName?: string, data: Messages[], variant?: "channel" | "thread" | "conversation", maxPages: number }) => {
 
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);

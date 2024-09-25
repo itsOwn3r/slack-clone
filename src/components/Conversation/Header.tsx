@@ -2,18 +2,27 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { FaChevronDown } from 'react-icons/fa';
 
 
-const Header = ({ memberName = "Member", onClick }: { memberName?: string, onClick: () => void }) => {
+const Header = ({ memberName = "Member", onClick }: { memberName?: string | null, onClick: () => void }) => {
 
-    const avatarFallback = memberName.charAt(0).toUpperCase();
+    const avatarFallback = memberName?.charAt(0).toUpperCase();
 
   return (
     <div className='bg-white border-b h-[49px] flex items-center px-4 overflow-hidden'>
         <Button variant="ghost" className='text-lg font-semibold px-2 overflow-hidden w-auto' size="sm" onClick={onClick}>
-            <Avatar>
-                
+            <Avatar className='size-6 mr-2'>
+                <AvatarImage className='rounded-md' src={"/images/124599.jpg"} />
+                <AvatarFallback className='rounded-md text-white bg-sky-500 text-sm'>
+                    {avatarFallback}
+                </AvatarFallback>
             </Avatar>
+
+            <span className='truncate'>
+              {memberName}
+            </span>
+            <FaChevronDown className='size-2.5 ml-2' />
         </Button>
     </div>
   )
