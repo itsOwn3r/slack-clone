@@ -9,6 +9,7 @@ import {
     ResizablePanelGroup,
   } from "@/components/ui/resizable"
 import WorkspaceSidebar from '@/components/Workspaces/WorkspaceSidebar';
+import Panel from '@/components/panel/Panel';
 
   
 const WorkspaceIdLayout = async ({ children, params }: { children: ReactNode, params: { id: string } }) => {
@@ -37,6 +38,7 @@ const WorkspaceIdLayout = async ({ children, params }: { children: ReactNode, pa
                 <ResizablePanel minSize={20} defaultSize={80}>
                     {children}
                 </ResizablePanel>
+                <Panel />
             </ResizablePanelGroup>
         </div>
     </div>

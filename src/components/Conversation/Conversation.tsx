@@ -16,4 +16,4 @@ const Conversation = ({ id, name, currentMemberName, maxPages, allMessages }: { 
   )
 }
 
-export default Conversation
+export default Conversation;

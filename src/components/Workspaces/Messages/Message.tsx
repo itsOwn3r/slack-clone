@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import useConfirm from '@/hooks/use-confirm';
+import { usePanel } from '@/hooks/use-panel';
 
 const Editor = dynamic(() => import("@/components/Editor"), { ssr: false })
 
@@ -38,6 +39,8 @@ const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditin
 
     const [isUpdatingMessage, setIsUpdatingMessage] = useState(false);
     const [isRemoving, setIsRemoving] = useState(false);
+
+    const { onOpenProfile } = usePanel();
 
     const handleUpdate = async ({ body }: { body: string }) => {
         try {
@@ -141,7 +144,7 @@ const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditin
         <div className={cn('flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative', isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]", isRemoving && "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300")}>
             <ConfirmDialog />
             <div className="flex items-center gap-2">
-                <button>
+                <button onClick={() => onOpenProfile(memberId)}>
                     <Avatar className='rounded-md'>
                         <AvatarImage src="/images/124599.jpg" />
                         <AvatarFallback>
@@ -162,7 +165,7 @@ const Message = ({ id, body, createdAt, isAuthor, isEditing, memberId, setEditin
                 ) : (
                 <div className='flex flex-col w-full overflow-hidden'>
                     <div className='text-sm'>
-                        <button className='font-bold text-primary hover:underline'>
+                        <button onClick={() => onOpenProfile(memberId)} className='font-bold text-primary hover:underline'>
                             {authorName}
                         </button>
                         <span> &nbsp;&nbsp; </span>
