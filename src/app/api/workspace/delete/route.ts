@@ -42,6 +42,18 @@ export async function POST(req: Request){
             }
         })
 
+        const deleteConversation = await db.conversation.deleteMany({
+            where: {
+                workspaceId: id
+            }
+        })
+
+        const deleteMessage = await db.messages.deleteMany({
+            where: {
+                workspaceId: id
+            }
+        })
+
         const deleteWorkspace = await db.workspaces.delete({
             where: {
                 id,

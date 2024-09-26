@@ -36,6 +36,12 @@ export async function POST(req: Request){
             return NextResponse.json({ success: false, message: "Workspace not found! Or you're not admin!" });
         }
 
+        const deleteMessages = await db.messages.deleteMany({
+            where:{
+                channelId,
+            }
+        })
+
         const deleteChannel = await db.channels.delete({
             where:{
                 id: channelId

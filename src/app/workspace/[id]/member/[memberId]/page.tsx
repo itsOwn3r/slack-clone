@@ -166,7 +166,7 @@ const ConversationPage = async ({ params, searchParams }: { params: { id: string
      const maxPages = Math.ceil(countAllMessages / 20);
 
   return (
-    <Conversation id={conversationId} allMessages={allMessages} name={findOtherMember?.user.name} currentMemberName={currentMember?.user.name} maxPages={maxPages} />
+    <Conversation id={conversationId} memberId={findOtherMember?.id} allMessages={allMessages} name={findOtherMember?.user.name} currentMemberName={currentMember?.user.name} maxPages={maxPages} />
   )
 }
 
