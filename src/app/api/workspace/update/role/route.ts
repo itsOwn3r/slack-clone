@@ -13,7 +13,9 @@ export async function POST(req: Request){
 
         const data = await req.json();
 
-        const { id, workspaceId } = data;
+        let { id, workspaceId, role } = data;
+
+        id = Number(id);
 
         if (!workspaceId || !id) {
             return NextResponse.json({ success: false, message: "workspaceId and MemberId is required!" });
@@ -70,11 +72,11 @@ export async function POST(req: Request){
 
         const editRole = await db.members.update({
             where: {
-                workspaceId: id,
+                workspaceId,
                 id
             },
             data: {
-                role: "admin"
+                role: role
             }
         })
 

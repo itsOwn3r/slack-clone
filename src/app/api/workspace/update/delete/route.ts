@@ -13,7 +13,9 @@ export async function POST(req: Request){
 
         const data = await req.json();
 
-        const { id, workspaceId } = data;
+        let { id, workspaceId } = data;
+
+        id = Number(id);
 
         if (!workspaceId || !id) {
             return NextResponse.json({ success: false, message: "workspaceId and MemberId is required!" });
@@ -28,6 +30,10 @@ export async function POST(req: Request){
 
         if (!findMember) {
             return NextResponse.json({ success: false, message: "Member cannot be found!" });
+        }
+
+        if (findMember.role === "admin") {
+            return NextResponse.json({ success: false, message: "Admins cannot be kicked out!" });
         }
 
         const findAdmin = await db.user.findUnique({
@@ -56,6 +62,10 @@ export async function POST(req: Request){
             return NextResponse.json({ success: false, message: "Your account cannot be found!" });
         }
 
+        if (findAdmin.id === findMember.userId) {
+            return NextResponse.json({ success: false, message: "You cannot kick yourself out!" });
+        }
+
         const checkIsAdmin = await db.members.findFirst({
             where: {
                 workspaceId,
@@ -70,8 +80,13 @@ export async function POST(req: Request){
 
         const editRole = await db.members.delete({
             where: {
-                workspaceId: id,
-                id
+                id,
+                workspaceId,
+            },
+            include: {
+                // Messages: true,
+                Conversation: true,
+                ConversationTwo: true
             }
         })
 

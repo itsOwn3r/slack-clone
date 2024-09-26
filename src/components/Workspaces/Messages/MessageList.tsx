@@ -119,7 +119,7 @@ const MessageList = ({ memberName, channelName, data, variant = "channel", maxPa
 
                     return (
                         <div key={message.id}>
-                            <Message key={message.id} id={message.id} isEditing={editingId === message.id} isCompact={isCompact} setEditingId={setEditingId} memberId={message.memberId} authorName={message.senderName} isAuthor={(currentMember?.userId || "") === message.userId} body={message.body} updatedAt={message.updatedAt} createdAt={message.time}  />
+                            <Message key={message.id} id={message.id} isEditing={editingId === message.id} isCompact={isCompact} setEditingId={setEditingId} memberId={message.memberId || 0} authorName={message.senderName} isAuthor={(currentMember?.userId || "") === message.userId} body={message.body} updatedAt={message.updatedAt} createdAt={message.time}  />
                         </div>
                     )
                 })}

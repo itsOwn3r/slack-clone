@@ -60,6 +60,12 @@ const ChannelIdPage = async ({ params, searchParams }: { params: { id: string, c
       return notFound();
     }
 
+    const isMember = findChannel.workspace.Members.length === 0 ? false : true;
+
+    if (!isMember) {
+      return notFound();
+    }
+
 
     const isAdmin = findChannel.workspace.Members[0].role === "admin";
 

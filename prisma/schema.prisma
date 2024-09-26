@@ -74,14 +74,14 @@ model Messages {
   body            String
   senderName      String
   image           String?
-  memberId        Int
-  member          Members    @relation(fields: [memberId], references: [id])
+  memberId        Int?
+  member          Members?    @relation(fields: [memberId], references: [id], onDelete: SetNull)
   workspaceId     String
   workspace       Workspaces @relation(fields: [workspaceId], references: [id])
   channelId       String?
   channel         Channels?  @relation(fields: [channelId], references: [id])
   parentMessageId String?
-  parentMessage   Messages?  @relation(name: "parentMessage", fields: [parentMessageId], references: [id])
+  parentMessage   Messages?  @relation(name: "parentMessage", fields: [parentMessageId], references: [id], onDelete: SetNull)
 
   conversationId String?
   conversation   Conversation? @relation(fields: [conversationId], references: [id])
@@ -101,11 +101,11 @@ model Conversation {
   workspaceId String
   workspace   Workspaces @relation(fields: [workspaceId], references: [id])
 
-  memberOneId Int
-  member      Members @relation(name: "memberOne", fields: [memberOneId], references: [id])
+  memberOneId Int?
+  member      Members? @relation(name: "memberOne", fields: [memberOneId], references: [id], onDelete: SetNull)
 
-  memberTwoId Int
-  memberTwo   Members @relation(name: "memberTwo", fields: [memberTwoId], references: [id])
+  memberTwoId Int?
+  memberTwo   Members? @relation(name: "memberTwo", fields: [memberTwoId], references: [id], onDelete: SetNull)
 
   Messages Messages[]
 }

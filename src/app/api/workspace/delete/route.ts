@@ -36,6 +36,12 @@ export async function POST(req: Request){
             }
         })
 
+        const deleteChannels = await db.channels.deleteMany({
+            where: {
+                workspaceId: id
+            }
+        })
+
         const deleteWorkspace = await db.workspaces.delete({
             where: {
                 id,
