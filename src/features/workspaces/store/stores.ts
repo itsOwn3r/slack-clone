@@ -6,6 +6,10 @@ export const useCreateWorkspaceModal = () => {
     return useAtom(modalState);
 }
 
+export const useCreateFirstWorkspaceModal = () => {
+    return useAtom(modalState);
+}
+
 const editModalState = atom(false);
 
 export const useEditWorkspaceModal = () => {

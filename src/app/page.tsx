@@ -4,6 +4,7 @@ import { useCreateWorkspaceModal } from "@/features/workspaces/store/stores";
 import { getWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 import db from "@/lib/db";
 import { redirect } from "next/navigation";
+import CreateWorkspace from "@/components/Workspaces/CreateWorkspace";
 
 export default async function Home() {
   const user = await auth();
@@ -12,11 +13,18 @@ export default async function Home() {
     return redirect("/auth");
   }
 
-  // const workspaces = await getWorkspaces();
+  const workspaces = await getWorkspaces(user.user.id);
+  // const workspaces = [];
+
+  if (workspaces.length > 0) {
+    return redirect(`/workspace/${workspaces[0].id}`);
+  } else {
+    return (
+      <CreateWorkspace />
+    )    
+  }
 
   // const [open, setOpen] = useCreateWorkspaceModal();
   // console.log(open);
-  return (
-    <div>Hello</div>
-  )
+
 }
