@@ -25,8 +25,6 @@ const ChannelIdPage = async ({ params, searchParams }: { params: { id: string, c
       }
     }
 
-    console.log(getTake());
-
 
     const findChannel = await db.channels.findUnique({
       where: {

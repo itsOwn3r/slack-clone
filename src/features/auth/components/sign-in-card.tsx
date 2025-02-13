@@ -64,14 +64,6 @@ const SignInCard = ({ setState }: SignInCardProps) => {
         }
     }    
 
-
-    const githubHandler = async () => {
-        const res = await fetch("/api/auth/logup/github", {
-            // body: JSON.stringify({ test: "Okk" })
-        })
-
-        const data = await res.text()
-    }
   return (
     <Card className='w-full h-full p-8'>
         <CardHeader className='px-0 pt-0'>
@@ -97,19 +89,6 @@ const SignInCard = ({ setState }: SignInCardProps) => {
                 <Button className='w-full' size="lg" type='submit' disabled={isLoading}>Continue</Button>
             </form>
 
-            <Separator />
-
-            <div className="flex flex-col gap-y-2.5">
-
-                <Button disabled={isLoading} onClick={() => {}} variant="outline" size="lg" className='w-full relative'>
-                    <FcGoogle className='size-5 absolute left-3 top-2.5' /> Continue with Google
-                </Button>
-
-                <Button disabled={isLoading} onClick={() => signIn("github")} variant="outline" size="lg" className='w-full relative'>
-                    <FaGithub className='size-5 absolute left-3 top-2.5' /> Continue with GitHub
-                </Button>
-
-            </div>
 
             <p className='text-xs text-muted-foreground'>
                 Don&apos;t have an account? <span className='cursor-pointer font-bold text-sky-700 hover:underline' onClick={() => setState("signUp")}>Sign Up</span>

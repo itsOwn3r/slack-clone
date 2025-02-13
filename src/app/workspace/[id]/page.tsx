@@ -40,7 +40,6 @@ const WorkspacePage = async ({ params }: { params: { id: string } }) => {
       }
     });
 
-    console.log(workspace);
 
     const isAdmin = findMember?.role === "admin" ? true : false;
 

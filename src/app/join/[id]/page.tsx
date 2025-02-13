@@ -28,8 +28,6 @@ const JoinWorkspacePage = ({ params }: { params: { id: string } }) => {
 
         const response = await join.json();
 
-        console.log(response);
-
         if (response.success) {
             toast.success(response.message, {
                 className: "text-lg",

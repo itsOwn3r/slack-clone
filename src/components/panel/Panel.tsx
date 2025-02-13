@@ -90,8 +90,6 @@ const Panel = () => {
 
     }, [profileMemberId, showPanel, workspaceId])
 
-    console.log(profile);
-
     if (!showPanel) return null;
 
     if (!hasLoaded) {
@@ -164,7 +162,7 @@ const Panel = () => {
     }
 
     const onRoleChange = async (role: string) => {
-        console.log("Whassup?");
+
         const ok = await confirmUpdate();
 
         if (!ok) return;
@@ -184,7 +182,6 @@ const Panel = () => {
           }
     }
 
-    console.log(profile);
     const fallback = profile.user.name.charAt(0).toUpperCase();
 
   return (

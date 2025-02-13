@@ -1,18 +1,15 @@
 "use client";
-import { useCreateFirstWorkspaceModal, useCreateWorkspaceModal } from '@/features/workspaces/store/stores';
-import React, { useEffect } from 'react'
+import { useCreateFirstWorkspaceModal } from "@/features/workspaces/store/stores";
+import React, { useEffect } from "react";
 
 const CreateWorkspace = () => {
-      const [open, setOpen] = useCreateFirstWorkspaceModal();
-  console.log(open);
+  const [open, setOpen] = useCreateFirstWorkspaceModal();
 
   useEffect(() => {
-    setOpen(true)
-  },[setOpen])
-  
-  return (
-    <div ></div>
-  )
-}
+    setOpen(true);
+  }, [setOpen]);
 
-export default CreateWorkspace
+  return <div></div>;
+};
+
+export default CreateWorkspace;

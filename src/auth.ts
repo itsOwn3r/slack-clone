@@ -1,16 +1,14 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import GitHub from "next-auth/providers/github"
 import { LoginSchema } from "@/types/Schema";
 import { createHmac } from "crypto";
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { PrismaClient } from "@prisma/client";
 import db from "./lib/db";
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(db),
-  providers: [GitHub, Credentials({
+  providers: [Credentials({
     type: "credentials",
     name: "email",
     credentials: {

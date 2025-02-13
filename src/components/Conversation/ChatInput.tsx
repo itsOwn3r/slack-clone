@@ -27,7 +27,6 @@ const DirectChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
 
     const { id } = params;
 
-    console.log(id);
     
     const handleSubmit = async ({
       body,
@@ -36,8 +35,6 @@ const DirectChatInput = ({ placeholder, conversationId }: ChatInputProps) => {
       body: string,
       image: File | null
     }) => {
-
-    console.log({ body, image});
 
 
         setIsLoading(true);

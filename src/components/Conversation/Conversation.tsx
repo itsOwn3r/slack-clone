@@ -7,7 +7,7 @@ import { Messages } from '@prisma/client';
 import { usePanel } from '@/hooks/use-panel';
 
 const Conversation = ({ id, memberId, name, currentMemberName, maxPages, allMessages }: { id: string, memberId?: number, allMessages: Messages[], name?: string | null, currentMemberName?: string | null, maxPages: number}) => {
-  console.log("id is:" + id);
+
   const { onOpenProfile } = usePanel();
     return (
     <div className='flex flex-col h-full'>

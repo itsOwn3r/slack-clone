@@ -17,9 +17,6 @@ const ConversationPage = async ({ params, searchParams }: { params: { id: string
     const workspaceId = params.id;
     const memberId = params.memberId;
 
-    console.log(workspaceId);
-    console.log(memberId);
-
     let conversationId;
         
 
@@ -106,8 +103,7 @@ const ConversationPage = async ({ params, searchParams }: { params: { id: string
           return (Number(searchParams.page)) * 20;
       }
     }
-    
-    console.log(getTake());
+
     /*
 
 

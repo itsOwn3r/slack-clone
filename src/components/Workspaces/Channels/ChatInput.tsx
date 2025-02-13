@@ -26,8 +26,6 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
 
     const { id, channelId } = params;
 
-    console.log(id);
-    console.log(channelId);
     
     const handleSubmit = async ({
       body,
@@ -36,8 +34,6 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
       body: string,
       image: File | null
     }) => {
-
-    console.log({ body, image});
 
 
         setIsLoading(true);

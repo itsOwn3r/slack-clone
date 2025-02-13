@@ -24,7 +24,4 @@ export default async function Home() {
     )    
   }
 
-  // const [open, setOpen] = useCreateWorkspaceModal();
-  // console.log(open);
-
 }
